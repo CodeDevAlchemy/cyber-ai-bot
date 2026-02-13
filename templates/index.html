@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Cyber AI Assistant</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Google Font -->
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
+
+<!-- Markdown Parser -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Orbitron', sans-serif;
+    background: radial-gradient(circle at top, #1a0033, #0a001a);
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #00ffff;
+}
+
+.container {
+    width: 900px;
+    height: 600px;
+    background: rgba(15, 15, 40, 0.8);
+    border-radius: 20px;
+    box-shadow: 0 0 40px #00ffff;
+    display: flex;
+    overflow: hidden;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 200px;
+    background: rgba(10, 10, 30, 0.9);
+    padding: 20px;
+    border-right: 2px solid #00ffff;
+}
+
+.sidebar h2 {
+    margin-bottom: 30px;
+    color: #ff00ff;
+}
+
+.sidebar ul {
+    list-style: none;
+}
+
+.sidebar ul li {
+    margin: 20px 0;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.sidebar ul li:hover {
+    color: #ff00ff;
+}
+
+/* Chat Area */
+.chat-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.messages {
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: 20px;
+    padding-right: 10px;
+}
+
+.user, .bot {
+    padding: 12px 18px;
+    margin-bottom: 15px;
+    border-radius: 15px;
+    max-width: 70%;
+    line-height: 1.6;
+    word-wrap: break-word;
+}
+
+.user {
+    align-self: flex-end;
+    background: #00ffff;
+    color: #000;
+    box-shadow: 0 0 15px #00ffff;
+}
+
+.bot {
+    align-self: flex-start;
+    background: #1a1a3d;
+    border: 1px solid #ff00ff;
+    box-shadow: 0 0 15px #ff00ff;
+}
+
+/* Input Area */
+.input-area {
+    display: flex;
+    gap: 10px;
+}
+
+input {
+    flex: 1;
+    padding: 12px;
+    border-radius: 10px;
+    border: 2px solid #00ffff;
+    background: transparent;
+    color: #00ffff;
+    font-size: 14px;
+}
+
+input:focus {
+    outline: none;
+    box-shadow: 0 0 15px #00ffff;
+}
+
+button {
+    padding: 12px 20px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    background: #ff00ff;
+    color: white;
+    font-weight: bold;
+    box-shadow: 0 0 15px #ff00ff;
+    transition: 0.3s;
+}
+
+button:hover {
+    background: #ff33ff;
+}
+
+</style>
+</head>
+<body>
+
+<div class="container">
+    <div class="sidebar">
+        <h2>DEEP WEB</h2>
+        <ul>
+            <li>Dashboard</li>
+            <li>Scan</li>
+            <li>Reports</li>
+            <li>Settings</li>
+        </ul>
+    </div>
+
+    <div class="chat-area">
+        <div class="messages" id="messages"></div>
+
+        <div class="input-area">
+            <input type="text" id="messageInput" placeholder="Type your message..." />
+            <button onclick="sendMessage()">SEND</button>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+
+    async function sendMessage() {
+        const input = document.getElementById("messageInput");
+        const messages = document.getElementById("messages");
+
+        const userText = input.value.trim();
+        if (!userText) return;
+
+        messages.innerHTML += `<div class="user">${userText}</div>`;
+
+        const response = await fetch("/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message: userText })
+        });
+
+        const data = await response.json();
+        messages.innerHTML += `<div class="bot">${marked.parse(data.reply)}</div>`;
+
+        input.value = "";
+        messages.scrollTop = messages.scrollHeight;
+    }
+
+    window.sendMessage = sendMessage;
+
+    const input = document.getElementById("messageInput");
+
+    input.addEventListener("keydown", function(event) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            sendMessage();
+        }
+    });
+
+});
+</script>
+
+</body>
+</html>
