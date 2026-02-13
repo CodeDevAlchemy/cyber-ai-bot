@@ -7,7 +7,6 @@ print("Current working directory:", os.getcwd())
 print("Files in this directory:", os.listdir())
 
 load_dotenv() 
-print("API KEY:", os.getenv("GEMINI_API_KEY"))
 
 app = Flask(__name__)
 
