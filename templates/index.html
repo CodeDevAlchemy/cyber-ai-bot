@@ -214,34 +214,28 @@ button:hover {
 
         <div class="input-area">
             <input type="text" id="messageInput" placeholder="Type your message..." />
-            <button onclick="sendMessage()">SEND</button>
+            <button id="sendBtn">SEND</button>
+
         </div>
     </div>
 </div>
 
 <script>
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
+
+    const messages = document.getElementById("messages");
+    const input = document.getElementById("messageInput");
+    const sendBtn = document.getElementById("sendBtn");
 
     async function sendMessage() {
-        function typeWriter(element, text, speed = 20) {
-    let i = 0;
-    element.innerHTML = "";
-    const interval = setInterval(() => {
-        element.innerHTML = marked.parse(text.substring(0, i));
-        i++;
-        if (i > text.length) {
-            clearInterval(interval);
-        }
-    }, speed);
-}
-
-        const input = document.getElementById("messageInput");
-        const messages = document.getElementById("messages");
-
         const userText = input.value.trim();
         if (!userText) return;
 
+        // Show user message
         messages.innerHTML += `<div class="user">${userText}</div>`;
+        input.value = "";
+        messages.scrollTop = messages.scrollHeight;
+
         // Show typing animation
         const typingDiv = document.createElement("div");
         typingDiv.className = "typing";
@@ -249,26 +243,60 @@ document.addEventListener("DOMContentLoaded", function() {
         messages.appendChild(typingDiv);
         messages.scrollTop = messages.scrollHeight;
 
+        try {
+            const response = await fetch("/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: userText })
+            });
 
-        const response = await fetch("/chat", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ message: userText })
-        });
+            const data = await response.json();
 
-        const data = await response.json();
-        typingDiv.remove();
-const botDiv = document.createElement("div");
-botDiv.className = "bot";
-messages.appendChild(botDiv);
+            typingDiv.remove();
 
-typeWriter(botDiv, data.reply);
+            const botDiv = document.createElement("div");
+            botDiv.className = "bot";
+            messages.appendChild(botDiv);
 
-messages.scrollTop = messages.scrollHeight;
+            typeWriter(botDiv, data.reply);
 
+            messages.scrollTop = messages.scrollHeight;
 
-}});
+        } catch (error) {
+            typingDiv.remove();
+            messages.innerHTML += `<div class="bot">⚠ Error connecting to server.</div>`;
+        }
+    }
+
+    function typeWriter(element, text, speed = 15) {
+        let i = 0;
+        element.innerHTML = "";
+
+        const interval = setInterval(() => {
+            element.innerHTML = marked.parse(text.substring(0, i));
+            i++;
+            if (i > text.length) {
+                clearInterval(interval);
+            }
+            messages.scrollTop = messages.scrollHeight;
+        }, speed);
+    }
+
+    // Enter key support
+    input.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            sendMessage();
+        }
+    });
+
+    // Button click support
+    sendBtn.addEventListener("click", sendMessage);
+
+});
 </script>
+
+
 
 </body>
 </html>
