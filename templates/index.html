@@ -223,6 +223,18 @@ button:hover {
 document.addEventListener("DOMContentLoaded", function() {
 
     async function sendMessage() {
+        function typeWriter(element, text, speed = 20) {
+    let i = 0;
+    element.innerHTML = "";
+    const interval = setInterval(() => {
+        element.innerHTML = marked.parse(text.substring(0, i));
+        i++;
+        if (i > text.length) {
+            clearInterval(interval);
+        }
+    }, speed);
+}
+
         const input = document.getElementById("messageInput");
         const messages = document.getElementById("messages");
 
@@ -246,26 +258,16 @@ document.addEventListener("DOMContentLoaded", function() {
 
         const data = await response.json();
         typingDiv.remove();
-        messages.innerHTML += `<div class="bot">${marked.parse(data.reply)}</div>`;
+const botDiv = document.createElement("div");
+botDiv.className = "bot";
+messages.appendChild(botDiv);
 
-        
+typeWriter(botDiv, data.reply);
 
-        input.value = "";
-        messages.scrollTop = messages.scrollHeight;
-    }
+messages.scrollTop = messages.scrollHeight;
 
-    window.sendMessage = sendMessage;
 
-    const input = document.getElementById("messageInput");
-
-    input.addEventListener("keydown", function(event) {
-        if (event.key === "Enter") {
-            event.preventDefault();
-            sendMessage();
-        }
-    });
-
-});
+}});
 </script>
 
 </body>
