@@ -2,23 +2,32 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Cyber AI Assistant</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HelixAI</title>
 
-<!-- Google Font -->
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
-
-<!-- Markdown Parser -->
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
 <style>
-    body::before {
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: #0b0f1a;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Animated Grid Background */
+body::before {
     content: "";
     position: fixed;
     width: 200%;
     height: 200%;
-    background-image: linear-gradient(#00ffff22 1px, transparent 1px),
-                      linear-gradient(90deg, #00ffff22 1px, transparent 1px);
+    background-image:
+        linear-gradient(#00ffff22 1px, transparent 1px),
+        linear-gradient(90deg, #00ffff22 1px, transparent 1px);
     background-size: 50px 50px;
     animation: moveGrid 20s linear infinite;
     z-index: -1;
@@ -29,8 +38,47 @@
     to { transform: translate(-50px,-50px); }
 }
 
-    .user, .bot {
+.chat-container {
+    width: 500px;
+    height: 80vh;
+    background: #11162a;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 0 30px #00ffff44;
+    overflow: hidden;
+}
+
+.header {
+    padding: 20px;
+    text-align: center;
+    font-size: 22px;
+    font-weight: bold;
+    background: #141b33;
+    border-bottom: 1px solid #00ffff55;
+}
+
+.messages {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.user, .bot {
+    margin-bottom: 15px;
+    padding: 12px 18px;
+    border-radius: 15px;
     animation: fadeIn 0.3s ease-in-out;
+}
+
+.user {
+    background: #00ffff22;
+    align-self: flex-end;
+}
+
+.bot {
+    background: #1a1f3a;
+    border: 1px solid #00ffff55;
 }
 
 @keyframes fadeIn {
@@ -38,21 +86,45 @@
     to { opacity: 1; transform: translateY(0); }
 }
 
-    .typing {
+.input-area {
+    display: flex;
+    padding: 15px;
+    background: #141b33;
+}
+
+#messageInput {
+    flex: 1;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+    font-size: 14px;
+}
+
+#sendBtn {
+    margin-left: 10px;
+    padding: 12px 20px;
+    border-radius: 10px;
+    border: none;
+    background: #00ffff;
+    color: black;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* Typing Animation */
+.typing {
     display: inline-block;
     padding: 12px 18px;
     border-radius: 15px;
-    background: #1a1a3d;
-    border: 1px solid #ff00ff;
-    box-shadow: 0 0 15px #ff00ff;
-    width: fit-content;
+    background: #1a1f3a;
 }
 
 .typing span {
     height: 8px;
     width: 8px;
     margin: 0 3px;
-    background-color: #ff00ff;
+    background-color: #00ffff;
     border-radius: 50%;
     display: inline-block;
     animation: bounce 1.4s infinite both;
@@ -65,158 +137,21 @@
     0%, 80%, 100% { transform: scale(0); }
     40% { transform: scale(1); }
 }
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: 'Orbitron', sans-serif;
-    background: radial-gradient(circle at top, #1a0033, #0a001a);
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #00ffff;
-}
-
-.container {
-    width: 900px;
-    height: 600px;
-    background: rgba(15, 15, 40, 0.8);
-    border-radius: 20px;
-    box-shadow: 0 0 40px #00ffff;
-    display: flex;
-    overflow: hidden;
-}
-
-/* Sidebar */
-.sidebar {
-    width: 200px;
-    background: rgba(10, 10, 30, 0.9);
-    padding: 20px;
-    border-right: 2px solid #00ffff;
-}
-
-.sidebar h2 {
-    margin-bottom: 30px;
-    color: #ff00ff;
-}
-
-.sidebar ul {
-    list-style: none;
-}
-
-.sidebar ul li {
-    margin: 20px 0;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.sidebar ul li:hover {
-    color: #ff00ff;
-}
-
-/* Chat Area */
-.chat-area {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    padding: 20px;
-}
-
-.messages {
-    flex: 1;
-    overflow-y: auto;
-    margin-bottom: 20px;
-    padding-right: 10px;
-}
-
-.user, .bot {
-    padding: 12px 18px;
-    margin-bottom: 15px;
-    border-radius: 15px;
-    max-width: 70%;
-    line-height: 1.6;
-    word-wrap: break-word;
-}
-
-.user {
-    align-self: flex-end;
-    background: #00ffff;
-    color: #000;
-    box-shadow: 0 0 15px #00ffff;
-}
-
-.bot {
-    align-self: flex-start;
-    background: #1a1a3d;
-    border: 1px solid #ff00ff;
-    box-shadow: 0 0 15px #ff00ff;
-}
-
-/* Input Area */
-.input-area {
-    display: flex;
-    gap: 10px;
-}
-
-input {
-    flex: 1;
-    padding: 12px;
-    border-radius: 10px;
-    border: 2px solid #00ffff;
-    background: transparent;
-    color: #00ffff;
-    font-size: 14px;
-}
-
-input:focus {
-    outline: none;
-    box-shadow: 0 0 15px #00ffff;
-}
-
-button {
-    padding: 12px 20px;
-    border-radius: 10px;
-    border: none;
-    cursor: pointer;
-    background: #ff00ff;
-    color: white;
-    font-weight: bold;
-    box-shadow: 0 0 15px #ff00ff;
-    transition: 0.3s;
-}
-
-button:hover {
-    background: #ff33ff;
-}
-
 </style>
 </head>
+
 <body>
 
-<div class="container">
-    <div class="sidebar">
-        <h2>DEEP WEB</h2>
-        <ul>
-            <li>Dashboard</li>
-            <li>Scan</li>
-            <li>Reports</li>
-            <li>Settings</li>
-        </ul>
+<div class="chat-container">
+    <div class="header">
+        HelixAI ● Online
     </div>
 
-    <div class="chat-area">
-        <div class="messages" id="messages"></div>
+    <div class="messages" id="messages"></div>
 
-        <div class="input-area">
-            <input type="text" id="messageInput" placeholder="Type your message..." />
-            <button id="sendBtn">SEND</button>
-
-        </div>
+    <div class="input-area">
+        <input type="text" id="messageInput" placeholder="Ask HelixAI..." />
+        <button id="sendBtn">SEND</button>
     </div>
 </div>
 
@@ -231,12 +166,10 @@ document.addEventListener("DOMContentLoaded", function () {
         const userText = input.value.trim();
         if (!userText) return;
 
-        // Show user message
         messages.innerHTML += `<div class="user">${userText}</div>`;
         input.value = "";
         messages.scrollTop = messages.scrollHeight;
 
-        // Show typing animation
         const typingDiv = document.createElement("div");
         typingDiv.className = "typing";
         typingDiv.innerHTML = "<span></span><span></span><span></span>";
@@ -251,7 +184,6 @@ document.addEventListener("DOMContentLoaded", function () {
             });
 
             const data = await response.json();
-
             typingDiv.remove();
 
             const botDiv = document.createElement("div");
@@ -259,7 +191,6 @@ document.addEventListener("DOMContentLoaded", function () {
             messages.appendChild(botDiv);
 
             typeWriter(botDiv, data.reply);
-
             messages.scrollTop = messages.scrollHeight;
 
         } catch (error) {
@@ -271,18 +202,14 @@ document.addEventListener("DOMContentLoaded", function () {
     function typeWriter(element, text, speed = 15) {
         let i = 0;
         element.innerHTML = "";
-
         const interval = setInterval(() => {
             element.innerHTML = marked.parse(text.substring(0, i));
             i++;
-            if (i > text.length) {
-                clearInterval(interval);
-            }
+            if (i > text.length) clearInterval(interval);
             messages.scrollTop = messages.scrollHeight;
         }, speed);
     }
 
-    // Enter key support
     input.addEventListener("keydown", function (event) {
         if (event.key === "Enter") {
             event.preventDefault();
@@ -290,13 +217,10 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // Button click support
     sendBtn.addEventListener("click", sendMessage);
 
 });
 </script>
-
-
 
 </body>
 </html>
